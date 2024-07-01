@@ -6,7 +6,7 @@ def simulate_rocket_trajectory(theta):
     RHO = 1.128  # Air density (kg/m^3)
     CD = 0.8  # Drag coefficient
     A = 0.007854  # Cross-sectional area (m^2)
-    M = 4.5  # Mass (kg)
+    M = 3.6  # Mass (kg)
     V0 = 87.5  # Initial velocity (m/s)
 
     # Initial conditions
@@ -43,14 +43,18 @@ THETA_STEP = np.radians(0.1)  # Angle increment (in radians)
 EPSILON = 10  # Allowable error (m)
 suitable_angles_and_positions = []  # List to store suitable angles and impact positions
 
+plt.figure(figsize=(10, 8))
+
 theta = THETA_MIN
 while theta <= THETA_MAX:
     x_data, y_data = simulate_rocket_trajectory(theta)
     impact_position = x_data[-1]
     if impact_position < TARGET_DISTANCE and TARGET_DISTANCE - impact_position < EPSILON:
         suitable_angles_and_positions.append((np.degrees(theta), impact_position))
-        degrees_value = np.degrees(theta)
-        plt.plot(x_data, y_data, "--", label=f'Theta: {degrees_value:.2f}, Impact Position: {impact_position:.2f} m')
+        end_x = impact_position
+        end_y = impact_position * np.tan(theta)
+        # plt.plot([0, end_x], [0, end_y],color="#FFA500",label="Restricted Area Boundary")
+        plt.plot(x_data, y_data, "--", label=f'Theta: {theta:.3f}, Impact Position: {impact_position:.2f} m')
     theta += THETA_STEP
 
 if suitable_angles_and_positions:
@@ -64,4 +68,7 @@ plt.legend()
 plt.xlabel('Horizontal Distance (m)')
 plt.ylabel('Vertical Distance (m)')
 plt.title('Trajectory for Expected Near Miss Falls within 100 Meters by Theta Angles')
+plt.axis([-150, 250, 0, 350])
+plt.gca().set_aspect('equal', adjustable='box')
+
 plt.show()
